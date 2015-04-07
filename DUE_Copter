@@ -411,7 +411,7 @@ void loopMotor()
 //PID Calculation Elevator  
 float Iay=0,Igy=0; 
 void Compute_Elevator(unsigned long dty)
-{float SetPitchAbout_Yg; float erRangeY=0.10;  bool CenterY; 
+{float SetPitchAbout_Yg; float erRangeY=0.10, kyg=0;  bool CenterY; 
 dty =dty*0.001; 
   //ERROR BY STICK COMMAND
   if (EL_Pulse>1505|| EL_Pulse<1490)
@@ -452,7 +452,7 @@ dty =dty*0.001;
             float OutRate_y = gkpy * Gyr_error_Y +  Igy;
          //ATTITUDE MODE
           float ky1;
-          float kyg=fkgy*(kyg + Gyr_y);
+          kyg=fkgy*(kyg + Gyr_y);
           if (kyg>=0.00) ky1=min(kyg, 2.0); else ky1=max(kyg, -2.0);          
          
           float jy=abs(Acc_y)*kyf; float Ky=jy*jy; float my=jy+Ky;         
@@ -485,7 +485,7 @@ dty =dty*0.001;
 
 
 //PID Calculation Elevator
-float Iax=0,Igx=0;  float erRangeX=0.10;  bool CenterX; 
+float Iax=0,Igx=0;  float erRangeX=0.10, kxg=0;  bool CenterX; 
 void Compute_Aileron(unsigned long dtx)
 {dtx =dtx*0.001; 
   if (AI_Pulse>1510 || AI_Pulse<1495)
