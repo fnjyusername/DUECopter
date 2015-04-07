@@ -109,11 +109,18 @@ boolean StickCenter=true;
 //http://www.w//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //http://www.w//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //http://www.w//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Variable P Limit
+float kxlim=16.0, kylim=16.0; 
+//Variable P
+float kxf=0.12, kyf=0.12, fkgx=0.00, fkgy=0.00;
+//Integral Limit
+float IaxLimPos=2.0, IaxLimNeg=4.0, IayLimPos=2.0, IayLimNeg=2.0; 
+//Stick Limit
+float mapxlim=100, mapylim=120;
 
-float  kpy=2.00,   kiy=kpy*0.0002,     kdy=kpy*0.90,     gkpy=0.0,   gkiy=gkpy*0.10,   gkdy=0/6.0; //Limits Max (Iax>=2.0 || Iax<=-4.0) and (Iay>=3.0 || Iay<=-3.0)
-float  kpx=2.00,   kix=kpx*0.0002,     kdx=kpx*1.00,     gkpx=0.0,   gkix=gkpx*0.10,   gkdx=0/6.0; 
-float  kpz=12.00,  kiz=kpz*0.0002,     kdz=kpz*0.45,     gkpz=0.00,  gkiz=0.00,        gkdz=0/15.0;
-float  kxlim=6.0, kylim=6.0; float kxf=1.00, kyf=1.00;
+float  kpy=1.80,   kiy=kpy*0.0001,     kdy=kpy*1.00,     gkpy=0.0,   gkiy=gkpy*0.10,   gkdy=0/6.0;
+float  kpx=1.80,   kix=kpx*0.0001,     kdx=kpx*1.45,     gkpx=0.0,   gkix=gkpx*0.10,   gkdx=0/6.0; 
+float  kpz=4.00,   kiz=kpz*0.0000,     kdz=kpz*1.45,     gkpz=0.00,  gkiz=0.00,        gkdz=0/15.0;
 //http://www.w////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //http://www.w////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //http://www.w////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -401,7 +408,7 @@ dty =dty*0.001;
             Att_error_Y = Acc_y - SetPitchAbout_Y;
             Att_errSum_Y = Att_errSum_Y + (Att_error_Y * dty);
             Iay = kiy * Att_errSum_Y;         
-            if  (Iay>=6.0 || Iay<=-6.0) {Att_errSum_Y=Att_errSum_Y - Att_error_Y * dty;} //Stop integration at limits
+            if  (Iay>=IayLimPos || Iay<=-IayLimNeg) {Att_errSum_Y=Att_errSum_Y - Att_error_Y * dty;} 
          //DERIVATIVE     
             Att_dErr_Y = (Att_error_Y - Att_lastErr_Y) / dty;
             //float tar=0.015; Att_dErr_Y = (tar*Att_dErr_Y/(tar+timeChangeSec)) + (Att_error_Y - Att_lastErr_Y) / timeChangeSec;
@@ -470,7 +477,7 @@ void Compute_Aileron(unsigned long dtx)
           Att_error_X = Acc_x - SetRollsAbout_X;         
           Att_errSum_X = Att_errSum_X + (Att_error_X * dtx);    
           Iax = kix * Att_errSum_X;                
-         
+          if  (Iax>=IaxLimPos || Iax<=-IaxLimNeg) {Att_errSum_X=Att_errSum_X - (Att_error_X * dtx);}
           //DERIVATIVE     
           Att_dErr_X = (Att_error_X - Att_lastErr_X) / dtx;
          
