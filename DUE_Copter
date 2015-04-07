@@ -435,8 +435,6 @@ dty =dty*0.001;
             if  (Iay>=IayLimPos || Iay<=-IayLimNeg) {Att_errSum_Y=Att_errSum_Y - Att_error_Y * dty;} 
          //DERIVATIVE     
             Att_dErr_Y = (Att_error_Y - Att_lastErr_Y) / dty;
-            //float tar=0.015; Att_dErr_Y = (tar*Att_dErr_Y/(tar+timeChangeSec)) + (Att_error_Y - Att_lastErr_Y) / timeChangeSec;
-
 /***************************GYRO RATE****************************************/         
         //INTEGRAL
             if(EL_Rate==false) {Gyr_error_Y = Gyr_y + Acc_y;} else {Gyr_error_Y = Acc_y - SetPitchAbout_Y;}
