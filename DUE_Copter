@@ -427,10 +427,14 @@ dty =dty*0.001;
          //GYRO MODE
             float OutRate_y = gkpy * Gyr_error_Y +  Igy;
          //ATTITUDE MODE
-          float ky0=min(abs(Acc_y)*kyf, kylim);
-          float ky1=min(abs(Gyr_y)*kyf, kylim);
-          float  ky=kpy+ky0;   //Serial.print(ky); Serial.print("\t"); Serial.print(ky0);Serial.print("\t"); Serial.println(ky1);
+          float ky1;
+          float kyg=fkgy*(kyg + Gyr_y);
+          if (kyg>=0.00) ky1=min(kyg, 2.0); else ky1=max(kyg, -2.0);          
+         
+          float jy=abs(Acc_y)*kyf; float Ky=jy*jy; float my=jy+Ky;         
+          float ky0=min(my, kylim);
           
+          float  ky=kpy + ky0;          
           float OutAtti_y = ky * Att_error_Y +  Iay + kdy*Gyr_dErr_Y;       
          //Final Combined Output
           OutputAtt_y=OutAtti_y + OutRate_y;
@@ -497,9 +501,14 @@ void Compute_Aileron(unsigned long dtx)
           float OutRate_x  = gkpx * Gyr_error_X + Igx;
          
          //ATTITUDE MODE
-          float kx0=min(abs(Acc_y)*kxf, kxlim);//Variable augmented P gain by Angle change
-          float kx1=min(abs(Gyr_x)*kxf, kxlim);
-          float  kx=kpx+kx0; //Serial.print(kx); Serial.print("\t"); Serial.print(kx0);Serial.print("\t"); Serial.println(kx1);         
+          kxg=fkgx*(kxg + Gyr_x);         
+          float kx1;
+          if (kxg>=0.00) kx1=min(kxg, 4.0); else kx1=max(kxg, -4.0);
+          
+          float jx=abs(Acc_x)*kxf; float Kx=jx*jx; float mx=jx+Kx;          
+          float kx0=min(mx, kxlim);
+          
+          float  kx=kpx + kx0; //Serial.print(kx); Serial.print("\t"); Serial.print(kpx);Serial.print("\t"); Serial.println(kx0);         
           float OutAtti_x = kx * Att_error_X + Iax + Gyr_dErr_X; 
          //Final Combined Output          
           OutputAtt_x=OutAtti_x + OutRate_x;
@@ -783,4 +792,3 @@ void calibrate_sensors() {
   y_accel /= num_readings;
   z_accel /= num_readings;
 }
-
