@@ -1,4 +1,5 @@
 Enter file contents here
+
  /*
 V2 -DRIFT CORRECTION 
 Important to set the proper orientation
@@ -6,6 +7,18 @@ of the IMU in relation to the Quadcopter intended
 orientation and identifying the sign (negative/posotive) 
 convention of the imu as it turns about the axis.Write it
 down, it will be helpfull in debugging strange motor response.
+
+It uses two Microcontroller, Arduino DUE and Trinket 3v/12Mhz
+The Trinket captures the RC Receiver and send to DUE via RX1, The DUE process
+the Sensors, PID, and Motor Output. 
+
+The Configurations are as follow:
+3S Lipo Battery 3000-4000mah to Power Motor
+3S Lipo Battery 1000mah to power the Microcontrollers
+1100kv Motor
+9" x 45pitch 
+Uses 450 Frame
+Total Weight 1.50kg
 */
 //////////////////////////////
 //  IMU Bank Orientation    //
@@ -138,69 +151,21 @@ boolean StickCenter=true;
 static float Output_YMax=250.0, Output_YMin=-250.0;
 static float Output_XMax=250.0, Output_XMin=-250.0;
 
-float mapxlim=250, mapylim=250, mapzlim=150;  float deadBand=0.50, Itakeoff=1250, PIDtakeoff=1170;
-float tauZ=0.125, tau=0.125; float kpxx=0.40; float kpyy=0.40; float kpzz=8.00;float kg=1.10;
+float mapxlim=250, mapylim=250, mapzlim=150;  float deadBand=0.50, Itakeoff=1200, PIDtakeoff=1170;
+float tauZ=0.125, tau=0.125; float kpxx=0.40; float kpyy=0.40; float kpzz=4.0;float kg=1.00;
 float Iax_Limit=120.0, Iay_Limit=120.0, Iaz_Limit=50;
 
-float  kpy=2.00,        kiy=0.015,          kdy=kpy*0.05;    
-float  kpx=2.00,        kix=0.015,          kdx=kpx*0.05;  
+
+float  kpy=1.60,        kiy=0.010,          kdy=kpy*0.025;    
+float  kpx=1.60,        kix=0.010,          kdx=kpx*0.025;  
 float  kpz=2.00,        kiz=0.000,          kdz=kpz*0.005;
 //http://www.w////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //http://www.w////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //http://www.w////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //http://www.w////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-
-********************************************************************************************************************************************************************
-3S-4000-9045" Soft ABS plastic Prop; Augmented variable P gain (kx=0.35 max 8.0) and (ky=0.35, max 8.0) ** Limits Max (Iax>=4.0 || Iax<=-8.0) and (Iay>=4.0 || Iay<=-4.0 try -6.0)
-********************************************************************************************************************************************************************
-//Calm & Stable
-float mapxlim=250, mapylim=250, mapzlim=80;  float deadBand=0.50;
-float tauZ=0.125, tau=0.90; float kpxx=0.40; float kpyy=0.40; float kpzz=10.00;float kg=1.10;
-float Iax_Limit=200.0, Iay_Limit=200.0, Iaz_Limit=50;
-float  kpy=2.00,        kiy=0.002,          kdy=kpy*0.50;    
-float  kpx=2.00,        kix=0.002,          kdx=kpx*0.50;  
-float  kpz=4.00,        kiz=0.002,          kdz=kpz*0.005;
 
 
-********************************************************************************************************************************************************************
-3S-3000-9045" Soft ABS plastic Prop; 
-********************************************************************************************************************************************************************
-//Calm & Stable
-float mapxlim=250, mapylim=250, mapzlim=80;  float deadBand=0.50;
-float tauZ=0.125, tau=0.90; float kpxx=0.40; float kpyy=0.40; float kpzz=10.00;float kg=1.10;
-float Iax_Limit=200.0, Iay_Limit=200.0, Iaz_Limit=50;
-float  kpy=2.00,        kiy=0.002,          kdy=kpy*0.50;    
-float  kpx=2.00,        kix=0.002,          kdx=kpx*0.50;  
-float  kpz=4.00,        kiz=0.002,          kdz=kpz*0.005;
 
-float mapxlim=160, mapylim=160, mapzlim=80; float deadBand=0.50;
-float tauZ=0.125, tau=0.65; float kpxx=0.70; float kpyy=0.70; float kpzz=10.00;float kg=1.00;
-float Iax_Limit=200.0, Iay_Limit=200.0, Iaz_Limit=50;
-
-float  kpy=2.00,        kiy=0.002,          kdy=kpy*0.10;    
-float  kpx=2.00,        kix=0.002,          kdx=kpx*0.10;  
-float  kpz=4.00,        kiz=0.002,         kdz=kpz*0.005;
-
-********************************************************************************************************************************************************************
-3S-2700-9045" Soft ABS plastic Prop; Augmented variable P gain  (kx=0.35 max 8.0) and (ky=0.60, max 8.0) ** Limits Max (Iax>=6.0 || Iax<=-6.0) and (Iay>=4.0 || Iay<=-4.0)
-********************************************************************************************************************************************************************
-float mapxlim=160, mapylim=160, mapzlim=80; float deadBand=0.50;
-float tauZ=0.125, tau=0.65; float kpxx=0.70; float kpyy=0.70; float kpzz=10.00;float kg=1.00;
-float Iax_Limit=200.0, Iay_Limit=200.0, Iaz_Limit=50;
-
-float  kpy=2.20,        kiy=0.002,          kdy=kpy*0.10;    
-float  kpx=2.00,        kix=0.002,          kdx=kpx*0.10;  
-float  kpz=4.00,        kiz=0.002,         kdz=kpz*0.005; 
-
-float mapxlim=250, mapylim=250, mapzlim=80;  float deadBand=0.50;
-float tauZ=0.125, tau=0.90; float kpxx=0.40; float kpyy=0.40; float kpzz=10.00;float kg=1.10;
-float Iax_Limit=200.0, Iay_Limit=200.0, Iaz_Limit=50;
-
-float  kpy=2.00,        kiy=0.002,          kdy=kpy*0.10;    
-float  kpx=2.00,        kix=0.002,          kdx=kpx*0.10;  
-float  kpz=4.00,        kiz=0.002,          kdz=kpz*0.005; 
-*/
 float Th=0, Ave=0;
 void setup() 
 {
@@ -218,44 +183,70 @@ while (Serial.available() && Serial.read()); delay(500);// empty buffer
 while (Serial1.available() && Serial1.read()); delay(500);// empty buffer 
 
 initializeMotors(numberOfMotors);
-commandAllMotors(MINPULSE);
+//calibrateESC();
+//commandAllMotors(MINPULSE);
 
 /*********************START OF MPU 6050 CONFIG********************************/ 
-
     Serial.println(F("Initializing I2C devices..."));
     mpu.initialize();
-
     // verify connection
     Serial.println(F("Testing device connections..."));
     Serial.println(mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed"));
-
-        // Set the full scale range of the gyro
-        uint8_t FS_SEL = 0;
-        //mpu.setFullScaleGyroRange(FS_SEL);
-
-        // get default full scale value of gyro - may have changed from default
-        // function call returns values between 0 and 3
-        uint8_t READ_FS_SEL = mpu.getFullScaleGyroRange();
-        Serial.print("FS_SEL = ");
+/*
+ * FS_SEL | Full Scale Range   | LSB Sensitivity
+ * -------+--------------------+----------------
+ * 0      | +/- 250 degrees/s  | 131 LSB/deg/s
+ * 1      | +/- 500 degrees/s  | 65.5 LSB/deg/s
+ * 2      | +/- 1000 degrees/s | 32.8 LSB/deg/s
+ * 3      | +/- 2000 degrees/s | 16.4 LSB/deg/s
+ 
+ MPU6050_GYRO_FS_250         0x00  (Default see .cpp file on MPU6050::initialize() )
+ MPU6050_GYRO_FS_500         0x01
+ MPU6050_GYRO_FS_1000        0x02
+ MPU6050_GYRO_FS_2000        0x03
+ 
+ MPU6050_ACCEL_FS_2          0x00  (Default see .cpp file on MPU6050::initialize() )
+ MPU6050_ACCEL_FS_4          0x01
+ MPU6050_ACCEL_FS_8          0x02
+ MPU6050_ACCEL_FS_16         0x03
+*/
+    //A. GYRO SETTINGS
+        // Set the full scale range of the GYROSCOPE (FS_SEL is 0 TO 3 see table above)
+        //Match FS_SEL and LSB from above
+        uint8_t FS_SEL = 0, LSB = 131;      
+        mpu.setFullScaleGyroRange(FS_SEL);delay(100);
+                
+        //Read and check actual settings
+        uint8_t READ_FS_SEL = mpu.getFullScaleGyroRange(); delay(50); 
+        Serial.print("GyroRange = ");
         Serial.println(READ_FS_SEL);
-        GYRO_FACTOR = 131/(FS_SEL + 1);
-        
-
-        // get default full scale value of accelerometer - may not be default value.  
-        // Accelerometer scale factor doesn't reall matter as it divides out
-        
-        //Set the full scale range of the accelerometer
-        uint8_t AFS_SEL = 0;
-        mpu.setFullScaleAccelRange(AFS_SEL);
-        
-        uint8_t READ_AFS_SEL = mpu.getFullScaleAccelRange();
-        Serial.print("AFS_SEL = ");
+        GYRO_FACTOR = LSB/(FS_SEL + 1);
+               
+     //B. ACCEL SETTINGS    
+        // Set the full scale range of the ACCELEROMETER (FS_SEL is 0 TO 3 see table above)
+        //Match FS_SEL and LSB from above     
+        uint8_t AFS_SEL = 3;
+        mpu.setFullScaleAccelRange(AFS_SEL);delay(100);
+                
+        //Read and check actual settings
+        uint8_t READ_AFS_SEL = mpu.getFullScaleAccelRange(); delay(50); 
+        Serial.print("AccelRange = ");
         Serial.println(READ_AFS_SEL);
         //ACCEL_FACTOR = 16384.0/(AFS_SEL + 1);
+        
+      //C. Read High pass filter
+         READ_AFS_SEL = mpu.getDHPFMode(); delay(50);     
+        Serial.print("DHPFMode = ");
+        Serial.println(READ_AFS_SEL);     
 
-    // get calibration values for sensors
-    calibrate_sensors();
-    //set_last_read_angle_data(millis(), 0, 0, 0, 0, 0, 0);
+      //C. Read Low pass filter     
+         mpu.setDLPFMode(2);
+         READ_AFS_SEL = mpu.getDLPFMode(); delay(50);     
+        Serial.print("DLPFMode = ");
+        Serial.println(READ_AFS_SEL);          
+
+     //C. CALIBRATION
+      calibrate_sensors();
 /*******END OF MPU 6050 CONFIG********************************/  
 
 
@@ -283,11 +274,11 @@ void loop()
               loopMotor(); // Calculate Value for Motor PWM input to writeMotors();
               writeMotors(); Acc_ZnowOld=Acc_z;
               //PWM Motor Output  
-              /**/
+              /*
               Serial.print(Gyr_x);  
               Serial.print('\t');
               Serial.print(Gyr_z); 
-              Serial.println(); 
+              Serial.println();*/ 
               /*if(Gyr_x>=1.0||Gyr_x<=-1.0) {Serial.print(Gyr_y); Serial.print("\t"); Serial.println(Gyr_x);}*/
              //Serial.println(dt_loop);
              //digitalWrite(LED_PIN,LOW);          
@@ -381,11 +372,10 @@ const float RADIANS_TO_DEGREES = 57.2958; //180/3.14159
 
 ////////////////////////////////////START IMU DATA USAGE AND MANUPULATION////////////////////////////////////////
 
-                    Acc_x= angle_x+0.00; Acc_x=xEMA(Acc_x);///Yaw
-                    Acc_y=-angle_y-0.40; Acc_y=yEMA(Acc_y);//Pitch  (-)FORWARD   (+)BACKWARD                   
-                    Acc_z=-angle_z;      Acc_z=zEMA(Acc_z); //RollS  (+)ROLLRIRGT (-)ROLLLEFT
-                    if (Acc_z>0) {Acc_z=Acc_z-0.02;}
-                    if (Acc_z<0) {Acc_z=Acc_z-0.02;}
+                    Acc_x= angle_x+0.00; 
+                    Acc_y=-angle_y-0.40;                   
+                    Acc_z=-angle_z;      
+
                     
                     if       (Acc_x>45)  {Acc_x=45;}
                     else if  (Acc_x<-45) {Acc_x=-45;}
@@ -398,17 +388,23 @@ const float RADIANS_TO_DEGREES = 57.2958; //180/3.14159
                     if (Acc_x>=-0.20 && Acc_x<=0.20) {digitalWrite(23, HIGH);} else {digitalWrite(23, LOW);}
                     if (Acc_y>=-0.20 && Acc_y<=0.20) {digitalWrite(22, HIGH);} else {digitalWrite(22, LOW);}
                     
-                    Gyr_x=gyro_x;  //Rolls Gyro + Right    -Left about X (See Axis top page)
-                    Gyr_x=gxEMA(Gyr_x);
-                    Gyr_y=-gyro_y; //Pitch Gyro + Forward   -Backward about Y (See Axis top page)                          
-                    Gyr_y=gyEMA(Gyr_y);
-                    Gyr_z=gyro_z; //Pitch Gyro -CW +CCW about Z (See Axis top page)                     
-                    Gyr_z=gzEMA(Gyr_z);                   
+                    Gyr_x=gyro_x;Gyr_x=gxEMA(Gyr_x);  //Rolls Gyro + Right    -Left about X (See Axis top page)
+
+                    Gyr_y=-gyro_y;Gyr_y=gyEMA(Gyr_y); //Pitch Gyro + Forward   -Backward about Y (See Axis top page)                          
+
+                    Gyr_z=gyro_z;Gyr_z=gzEMA(Gyr_z); //Pitch Gyro -CW +CCW about Z (See Axis top page)                     
+                  
                     /*DISPLAY
                       Serial.print(Gyr_x);  
+                      Serial.print('\t');                   
+                      Serial.print(Gyr_y);
                       Serial.print('\t');
-                      Serial.print(Gyr_y); 
-                      Serial.println(); */                  
+                      Serial.print(Gyr_z);                      
+                      Serial.print('\t');
+                      Serial.print(Acc_y); 
+                      Serial.print('\t');
+                      Serial.print(Acc_z);                       
+                      Serial.println();*/                   
 
 
 ////////////////////////////////////END IMU DATA USAGE AND MANUPULATION////////////////////////////////////////       
@@ -428,9 +424,9 @@ void loopMotor()
   float zTh=abs(Gyr_z);
   if (zTh>10) {zTh=10.0;}
 
-if (TH_Pulse>1700) TH_Pulse=1700;
+
    float Throttle=0.0+0.0+TH_Pulse;   
-    //FRONT MOTOR
+   if (Throttle>1700) Throttle=1700;
     
     RF1 = Throttle + (-Output_Y*0.7071)  + (+Output_X*0.7071) + (-Output_Z) -  0.0;//Pin 6  FRONT RIGHT Motor 1 (to Probe1) - Green
     LF2 = Throttle + (-Output_Y*0.7071)  + (-Output_X*0.7071) + (+Output_Z) +  0.0;//Pin 7   FRONT LEFT  Motor 2 (to Probe2) - White
@@ -860,7 +856,7 @@ float rudRCEMA(float new_value) {
 // Simple calibration - just average first few readings to subtract
 // from the later data
 void calibrate_sensors() {
-  int       num_readings = 500; //Default 10
+  int       num_readings = 1000; //Default 10
 
   // Discard the first reading (don't know if this is needed or
   // not, however, it won't hurt.)
@@ -883,6 +879,15 @@ void calibrate_sensors() {
   base_x_accel /= num_readings;
   base_y_accel /= num_readings;
   base_z_accel /= num_readings;
+  
+  Serial.print("xg ");Serial.println(base_x_gyro);
+  Serial.print("yg ");Serial.println(base_y_gyro);
+  Serial.print("zg ");Serial.println(base_z_gyro);
+  Serial.print("xa ");Serial.println(base_x_accel);
+  Serial.print("ya ");Serial.println(base_y_accel);
+  Serial.print("za ");Serial.println(base_z_accel);
+
+  delay(100);
 }
 
 
@@ -941,7 +946,18 @@ double G_Dt=0;
 PID=kp*Px + Ix + kd*Dx;
   
 **********************************************************************************************************************************/
-
+//NOT USED
+void calibrateESC()
+{
+while(TH_Pulse<1900) 
+{digitalWrite(22, HIGH); digitalWrite(23, HIGH);delay(100);digitalWrite(22, LOW);digitalWrite(23, LOW); delay(100);}
+ digitalWrite(23, LOW);digitalWrite(22, LOW);delay(1000);
+  
+ while(TH_Pulse>1100)
+      {
+       writeMotors();    
+      }
+}
 
 
 
